@@ -9,36 +9,7 @@ const resultado = document.getElementById("resultado");
 
 let semitonosActuales = null;
 
-// Abreviaturas de cada intervalo por semitono (m=menor, M=mayor, J=justa, aum=aumentada, dis=disminuida).
-// Cuando el intervalo tiene un nombre equivalente (misma distancia, distinto nombre según la nota de
-// referencia), se muestra como etiqueta secundaria en el mismo botón (ej: 4aum / 5dis para el tritono).
-const abreviaturaIntervaloPorSemitono = {
-  0: ["Unís", null],
-  1: ["2m", null],
-  2: ["2M", null],
-  3: ["3m", null],
-  4: ["3M", null],
-  5: ["4J", null],
-  6: ["4aum", "5dis"],
-  7: ["5J", null],
-  8: ["6m", null],
-  9: ["6M", null],
-  10: ["7m", null],
-  11: ["7M", null],
-  12: ["8J", null],
-  13: ["9m", null],
-  14: ["9M", null],
-  15: ["10m", "9aum"],
-  16: ["10M", null],
-  17: ["11J", null],
-  18: ["11aum", "12dis"],
-  19: ["12J", null],
-  20: ["13m", null],
-  21: ["13M", null],
-  22: ["14m", null],
-  23: ["14M", null],
-  24: ["2x8", null]
-};
+// Abreviaturas de intervalo: ver abreviaturaIntervaloPorSemitono en diapason.js
 
 // Crea (o recrea) los botones de intervalo según el rango máximo elegido (0 hasta maxSemitonos)
 function poblarBotonesIntervalo() {
