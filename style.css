@@ -108,6 +108,56 @@ input[type="text"]:focus {
   cursor: pointer;
 }
 
+.opciones-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 4px 0 20px;
+}
+
+.opcion-boton {
+  flex: 0 0 auto;
+  min-width: 52px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--borde);
+  background: var(--bg);
+  color: var(--texto);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: bold;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.opcion-boton:hover:not(:disabled) {
+  background: var(--superficie-hover);
+  border-color: var(--acento);
+}
+
+.opcion-boton:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.opcion-boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.opcion-boton.correcta {
+  background: var(--exito);
+  border-color: var(--exito);
+  color: #0f1117;
+  opacity: 1;
+}
+
+.opcion-boton.incorrecta {
+  background: var(--error);
+  border-color: var(--error);
+  color: #0f1117;
+  opacity: 1;
+}
+
 .campo-doble {
   display: flex;
   gap: 12px;

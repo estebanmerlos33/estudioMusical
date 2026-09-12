@@ -1,58 +1,68 @@
 const pregunta = document.getElementById("pregunta");
-const inputRespuesta = document.getElementById("respuesta");
-const btnValidar = document.getElementById("btn-validar");
+const contenedorOpciones = document.getElementById("opciones-notas");
 const btnNueva = document.getElementById("btn-nueva");
 const resultado = document.getElementById("resultado");
 
 let cuerdaActual = null;
 let trasteActual = null;
+let notaCorrectaActual = null;
+
+// Crea los 12 botones de nota una sola vez (se reutilizan entre preguntas)
+function crearBotonesNotas() {
+  notasOrden.forEach((nota) => {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "opcion-boton";
+    boton.textContent = nota;
+    boton.dataset.nota = nota;
+    boton.addEventListener("click", () => seleccionarRespuesta(nota, boton));
+    contenedorOpciones.appendChild(boton);
+  });
+}
+
+function habilitarBotones() {
+  contenedorOpciones.querySelectorAll(".opcion-boton").forEach((boton) => {
+    boton.disabled = false;
+    boton.classList.remove("correcta", "incorrecta");
+  });
+}
+
+function deshabilitarBotones() {
+  contenedorOpciones.querySelectorAll(".opcion-boton").forEach((boton) => {
+    boton.disabled = true;
+  });
+}
 
 function generarPregunta() {
   cuerdaActual = Math.floor(Math.random() * 6) + 1; // 1 a 6
   trasteActual = Math.floor(Math.random() * 13); // 0 a 12
+  notaCorrectaActual = obtenerNotaEnPosicion(cuerdaActual, trasteActual);
 
   pregunta.textContent = `Cuerda ${cuerdaActual}, traste ${trasteActual}`;
-  inputRespuesta.value = "";
   resultado.textContent = "";
   resultado.className = "resultado";
-  inputRespuesta.focus();
+  habilitarBotones();
 }
 
-function validarRespuesta() {
-  const valor = inputRespuesta.value.trim();
+function seleccionarRespuesta(notaElegida, botonElegido) {
+  deshabilitarBotones();
 
-  if (valor === "") {
-    resultado.textContent = "Escribe una nota antes de validar.";
-    resultado.className = "resultado incorrecto";
-    return;
-  }
-
-  const notaCorrecta = obtenerNotaEnPosicion(cuerdaActual, trasteActual);
-
-  if (!notaCorrecta) {
-    resultado.textContent = "Error interno: no se pudo determinar la nota. Recarga la página (Ctrl+Shift+R).";
-    resultado.className = "resultado incorrecto";
-    return;
-  }
-
-  const esCorrecta = esNotaCorrecta(valor, notaCorrecta);
+  const esCorrecta = notaElegida === notaCorrectaActual;
 
   if (esCorrecta) {
+    botonElegido.classList.add("correcta");
     resultado.textContent = "¡Correcto!";
     resultado.className = "resultado correcto";
   } else {
-    resultado.textContent = `Incorrecto. La nota era: ${notaCorrecta}`;
+    botonElegido.classList.add("incorrecta");
+    const botonCorrecto = contenedorOpciones.querySelector(`[data-nota="${notaCorrectaActual}"]`);
+    if (botonCorrecto) botonCorrecto.classList.add("correcta");
+    resultado.textContent = `Incorrecto. La nota era: ${notaCorrectaActual}`;
     resultado.className = "resultado incorrecto";
   }
 }
 
-btnValidar.addEventListener("click", validarRespuesta);
 btnNueva.addEventListener("click", generarPregunta);
 
-inputRespuesta.addEventListener("keydown", (evento) => {
-  if (evento.key === "Enter") {
-    validarRespuesta();
-  }
-});
-
+crearBotonesNotas();
 generarPregunta();
