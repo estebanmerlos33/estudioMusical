@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Identificación de acorde</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="tarjeta">
+    <h1>¿Qué acorde es?</h1>
+
+    <section class="campo campo-doble">
+      <div>
+        <label for="cantidad-notas">Cantidad de notas</label>
+        <select id="cantidad-notas">
+          <option value="3">Tríada (3 notas)</option>
+          <option value="4">Tétrada (4 notas)</option>
+        </select>
+      </div>
+      <div>
+        <label for="inversion">Inversión</label>
+        <select id="inversion"></select>
+      </div>
+    </section>
+
+    <section class="campo">
+      <label for="tipo-acorde">Tipo de acorde</label>
+      <select id="tipo-acorde"></select>
+    </section>
+
+    <section class="campo">
+      <label for="pregunta">Notas dadas</label>
+      <p id="pregunta" class="pregunta-texto">Fa# - La - Re</p>
+    </section>
+
+    <section class="campo">
+      <label for="respuesta">Tu respuesta (raíz + tipo de acorde)</label>
+      <input type="text" id="respuesta" placeholder="Ej: Re menor">
+    </section>
+
+    <div class="botones">
+      <button id="btn-validar">Validar respuesta</button>
+      <button id="btn-nueva" class="secundario">Nueva pregunta</button>
+    </div>
+
+    <p id="resultado" class="resultado" aria-live="polite"></p>
+
+    <a class="enlace-volver" href="index.html">&larr; Volver al menú</a>
+  </main>
+
+  <script src="diapason.js?v=3"></script>
+  <script src="acordes.js?v=2"></script>
+  <script src="script6.js?v=1"></script>
+</body>
+</html>
