@@ -1,33 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
-    <title>Identificación de notas</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <main class="tarjeta">
-      <h1>¿Qué nota es?</h1>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Identificación de notas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="tarjeta">
+    <h1>¿Qué nota es?</h1>
 
-      <section class="campo">
-        <label for="pregunta">Posición en el diapasón</label>
-        <p id="pregunta" class="pregunta-texto">Cuerda 6, traste 0</p>
-      </section>
+    <section class="campo">
+      <label for="pregunta">Posición en el diapasón</label>
+      <p id="pregunta" class="pregunta-texto">Cuerda 6, traste 0</p>
+    </section>
 
-      <div id="opciones-notas" class="opciones-grid"></div>
+    <div id="diapason-visual" class="diapason-contenedor"></div>
 
-      <div class="botones">
-        <button id="btn-nueva" class="secundario">Nueva pregunta</button>
-      </div>
+    <div id="opciones-notas" class="opciones-grid"></div>
 
-      <p id="resultado" class="resultado" aria-live="polite"></p>
+    <div class="botones">
+      <button id="btn-nueva" class="secundario">Nueva pregunta</button>
+    </div>
 
-      <a class="enlace-volver" href="index.html">&larr; Volver al menú</a>
-    </main>
+    <p id="resultado" class="resultado" aria-live="polite"></p>
 
-    <script src="diapason.js?v=3"></script>
-    <script src="script1.js?v=4"></script>
-  </body>
+    <a class="enlace-volver" href="index.html">&larr; Volver al menú</a>
+  </main>
+
+  <script src="diapason.js?v=3"></script>
+  <script src="diapasonVisual.js?v=1"></script>
+  <script src="script1.js?v=5"></script>
+</body>
 </html>

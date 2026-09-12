@@ -54,6 +54,9 @@ function generarPregunta() {
   notaCorrectaActual = obtenerNotaEnPosicion(cuerdaActual, trasteActual);
 
   pregunta.textContent = `Cuerda ${cuerdaActual}, traste ${trasteActual}`;
+  if (typeof renderizarDiapason === "function") {
+    renderizarDiapason("diapason-visual", [{ cuerda: cuerdaActual, traste: trasteActual, grupo: 1 }]);
+  }
   resultado.textContent = "";
   resultado.className = "resultado";
   habilitarBotones();

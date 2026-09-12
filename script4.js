@@ -20,6 +20,9 @@ function generarPregunta() {
     par = generarParPosicionesAleatorio(maxSemitonos, maxTrastes, maxCuerdas);
   } catch (error) {
     pregunta.textContent = "—";
+    if (typeof renderizarDiapason === "function") {
+      renderizarDiapason("diapason-visual", []);
+    }
     resultado.textContent = error.message;
     resultado.className = "resultado incorrecto";
     semitonosActuales = null;
@@ -28,6 +31,12 @@ function generarPregunta() {
 
   semitonosActuales = par.semitonos;
   pregunta.textContent = `Cuerda ${par.cuerda1}, traste ${par.traste1}  →  Cuerda ${par.cuerda2}, traste ${par.traste2}`;
+  if (typeof renderizarDiapason === "function") {
+    renderizarDiapason("diapason-visual", [
+      { cuerda: par.cuerda1, traste: par.traste1, grupo: 1 },
+      { cuerda: par.cuerda2, traste: par.traste2, grupo: 2 }
+    ]);
+  }
   inputRespuesta.value = "";
   resultado.textContent = "";
   resultado.className = "resultado";

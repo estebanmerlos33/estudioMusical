@@ -192,6 +192,90 @@ input[type="text"]:focus {
   }
 }
 
+.diapason-contenedor {
+  background: var(--bg);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 12px 8px;
+  margin: 4px 0 20px;
+}
+
+.diapason-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 524 / 160;
+}
+
+.diapason-cuerda-linea,
+.diapason-traste-linea {
+  stroke: var(--borde-fuerte);
+  stroke-width: 1.5;
+}
+
+.diapason-nut {
+  stroke: var(--texto-secundario);
+  stroke-width: 4;
+}
+
+.diapason-inlay {
+  fill: var(--borde-fuerte);
+}
+
+.diapason-label-cuerda {
+  font-size: 9px;
+  fill: var(--texto-secundario);
+}
+
+.diapason-label-traste {
+  font-size: 9px;
+  fill: var(--texto-secundario);
+  text-anchor: middle;
+}
+
+.diapason-marcador {
+  stroke: #0f1117;
+  stroke-width: 1.5;
+}
+
+.diapason-marcador-1 {
+  fill: var(--acento);
+}
+
+.diapason-marcador-2 {
+  fill: #f0b429;
+}
+
+.diapason-leyenda {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: -10px 0 20px;
+  font-size: 0.8rem;
+  color: var(--texto-secundario);
+}
+
+.diapason-leyenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diapason-punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.diapason-punto-1 {
+  background: var(--acento);
+}
+
+.diapason-punto-2 {
+  background: #f0b429;
+}
+
 .campo-doble {
   display: flex;
   gap: 12px;
