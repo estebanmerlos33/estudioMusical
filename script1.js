@@ -7,14 +7,29 @@ let cuerdaActual = null;
 let trasteActual = null;
 let notaCorrectaActual = null;
 
+// Nombre alternativo en bemol para las notas alteradas (mismo dato que notasBemoles de diapason.js,
+// invertido para consulta rápida por nombre canónico con sostenido)
+const bemolEquivalente = {
+  "Do#": "Reb",
+  "Re#": "Mib",
+  "Fa#": "Solb",
+  "Sol#": "Lab",
+  "La#": "Sib"
+};
+
 // Crea los 12 botones de nota una sola vez (se reutilizan entre preguntas)
 function crearBotonesNotas() {
   notasOrden.forEach((nota) => {
     const boton = document.createElement("button");
     boton.type = "button";
     boton.className = "opcion-boton";
-    boton.textContent = nota;
     boton.dataset.nota = nota;
+
+    const alt = bemolEquivalente[nota];
+    boton.innerHTML = alt
+      ? `${nota}<span class="nota-alt">${alt}</span>`
+      : nota;
+
     boton.addEventListener("click", () => seleccionarRespuesta(nota, boton));
     contenedorOpciones.appendChild(boton);
   });
