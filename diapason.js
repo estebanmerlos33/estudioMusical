@@ -276,12 +276,27 @@ function generarParPosicionesAleatorio(maxSemitonos, maxDistanciaTrastes, maxDis
           if (diferenciaCuerdas >= maxDistanciaCuerdas) continue;
           if (diferenciaTrastes >= maxDistanciaTrastes) continue;
 
-          const semitonos = Math.abs(
-            obtenerSemitonoAbsoluto(cuerda1, traste1) - obtenerSemitonoAbsoluto(cuerda2, traste2)
-          );
+          const semitonoAbsoluto1 = obtenerSemitonoAbsoluto(cuerda1, traste1);
+          const semitonoAbsoluto2 = obtenerSemitonoAbsoluto(cuerda2, traste2);
+          const semitonos = Math.abs(semitonoAbsoluto1 - semitonoAbsoluto2);
           if (semitonos > semitonosTope) continue;
 
-          candidatos.push({ cuerda1, traste1, cuerda2, traste2, semitonos });
+          // La posición 1 siempre es la más grave (menor semitono absoluto) y la 2 la más aguda,
+          // independientemente de qué cuerda/traste haya salido primero en el sorteo.
+          const posicionGrave = semitonoAbsoluto1 <= semitonoAbsoluto2
+            ? { cuerda: cuerda1, traste: traste1 }
+            : { cuerda: cuerda2, traste: traste2 };
+          const posicionAguda = semitonoAbsoluto1 <= semitonoAbsoluto2
+            ? { cuerda: cuerda2, traste: traste2 }
+            : { cuerda: cuerda1, traste: traste1 };
+
+          candidatos.push({
+            cuerda1: posicionGrave.cuerda,
+            traste1: posicionGrave.traste,
+            cuerda2: posicionAguda.cuerda,
+            traste2: posicionAguda.traste,
+            semitonos
+          });
         }
       }
     }
