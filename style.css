@@ -186,6 +186,15 @@ input[type="text"]:focus {
   opacity: 0.5;
 }
 
+.oculto {
+  display: none !important;
+}
+
+.opcion-boton.activa {
+  border-color: var(--acento);
+  box-shadow: 0 0 0 2px var(--acento-suave);
+}
+
 .opcion-boton.correcta {
   background: var(--exito);
   border-color: var(--exito);

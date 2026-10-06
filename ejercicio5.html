@@ -9,15 +9,24 @@
   <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
   <link rel="icon" href="./icons/icon-192.png" type="image/png">
   <title>Armado de acorde</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <main class="tarjeta">
     <h1>Arma el acorde</h1>
 
     <section class="campo">
+      <label for="cantidad-notas">Cantidad de notas</label>
+      <select id="cantidad-notas">
+        <option value="3">Tríada (3 notas)</option>
+        <option value="4">Tétrada (4 notas)</option>
+      </select>
+    </section>
+
+    <section class="campo">
       <label>Tipos de acorde a practicar</label>
-      <div id="checkboxes-tipo" class="checkbox-grid"></div>
+      <div id="checkboxes-tipo-triada" class="checkbox-grid"></div>
+      <div id="checkboxes-tipo-tetrada" class="checkbox-grid oculto"></div>
     </section>
 
     <section class="campo">
@@ -42,9 +51,11 @@
       <p id="respuesta-construida" class="pregunta-texto">—</p>
     </section>
 
-    <div id="opciones-notas" class="opciones-grid"></div>
+    <div id="opciones-letras" class="opciones-grid"></div>
+    <div id="opciones-alteraciones" class="opciones-grid"></div>
 
     <div class="botones">
+      <button id="btn-validar">Validar respuesta</button>
       <button id="btn-borrar-ultima" class="secundario">Borrar última nota</button>
       <button id="btn-nueva" class="secundario">Nueva pregunta</button>
     </div>
@@ -56,7 +67,7 @@
 
   <script src="diapason.js?v=4"></script>
   <script src="acordes.js?v=2"></script>
-  <script src="script5.js?v=2"></script>
+  <script src="script5.js?v=3"></script>
   <script src="./sw-register.js"></script>
 </body>
 </html>

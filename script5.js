@@ -1,33 +1,41 @@
-const contenedorCheckboxesTipo = document.getElementById("checkboxes-tipo");
+const selectCantidadNotas = document.getElementById("cantidad-notas");
+const contenedorCheckboxesTipoTriada = document.getElementById("checkboxes-tipo-triada");
+const contenedorCheckboxesTipoTetrada = document.getElementById("checkboxes-tipo-tetrada");
 const contenedorCheckboxesInversion = document.getElementById("checkboxes-inversion");
 const checkboxMostrarFormula = document.getElementById("mostrar-formula");
 const pregunta = document.getElementById("pregunta");
 const respuestaConstruida = document.getElementById("respuesta-construida");
-const contenedorOpcionesNotas = document.getElementById("opciones-notas");
+const contenedorLetras = document.getElementById("opciones-letras");
+const contenedorAlteraciones = document.getElementById("opciones-alteraciones");
+const btnValidar = document.getElementById("btn-validar");
 const btnBorrarUltima = document.getElementById("btn-borrar-ultima");
 const btnNueva = document.getElementById("btn-nueva");
 const resultado = document.getElementById("resultado");
 
 let acordeActual = null;
 let respuestaUsuario = [];
+let indicePendiente = null; // índice de la última nota agregada que todavía puede recibir una alteración
 
-// Nombre alternativo en bemol para las notas alteradas (mismo patrón que el ejercicio 1)
-const bemolEquivalente = {
-  "Do#": "Reb",
-  "Re#": "Mib",
-  "Fa#": "Solb",
-  "Sol#": "Lab",
-  "La#": "Sib"
-};
+const TIPOS_TRIADA = ["mayor", "menor", "aumentado", "disminuido", "sus2", "sus4"];
+const TIPOS_TETRADA = ["maj7", "m7", "7", "semidisminuido", "dim7", "9na", "11na", "13na"];
+const TIPOS_TRIADA_DEFAULT = ["mayor", "menor", "aumentado", "disminuido"];
+const TIPOS_TETRADA_DEFAULT = ["maj7", "m7", "7", "semidisminuido"];
+
+const LETRAS = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+const ALTERACIONES = [
+  { simbolo: "♯", sufijo: "#", etiqueta: "Sostenido" },
+  { simbolo: "♭", sufijo: "b", etiqueta: "Bemol" },
+  { simbolo: "𝄪", sufijo: "##", etiqueta: "Doble sostenido" },
+  { simbolo: "𝄫", sufijo: "bb", etiqueta: "Doble bemol" }
+];
 
 // ==========================================================================
-// Checkboxes de tipo de acorde (triadas y tétradas juntas) e inversión
+// Checkboxes de tipo de acorde (según tríada/tétrada) e inversión
 // ==========================================================================
 
-function poblarCheckboxesTipo() {
-  contenedorCheckboxesTipo.innerHTML = "";
-
-  Object.keys(recetasAcordes).forEach((tipo) => {
+function crearCheckboxesTipo(contenedor, tipos, marcadosPorDefecto) {
+  contenedor.innerHTML = "";
+  tipos.forEach((tipo) => {
     const id = `tipo-${tipo}`;
     const label = document.createElement("label");
     label.className = "checkbox-item";
@@ -36,24 +44,24 @@ function poblarCheckboxesTipo() {
     const input = document.createElement("input");
     input.type = "checkbox";
     input.id = id;
-    input.checked = true;
+    input.checked = marcadosPorDefecto.includes(tipo);
     input.dataset.tipo = tipo;
     input.addEventListener("change", generarPregunta);
 
     label.appendChild(input);
     label.append(`${nombresLegiblesAcordes[tipo]} (${obtenerFormulaAcorde(tipo)})`);
-    contenedorCheckboxesTipo.appendChild(label);
+    contenedor.appendChild(label);
   });
 }
 
 function poblarCheckboxesInversion() {
   contenedorCheckboxesInversion.innerHTML = "";
-
   [0, 1, 2, 3].forEach((inv) => {
     const id = `inv-${inv}`;
     const label = document.createElement("label");
     label.className = "checkbox-item";
     label.setAttribute("for", id);
+    label.dataset.inversionItem = String(inv);
 
     const input = document.createElement("input");
     input.type = "checkbox";
@@ -68,74 +76,122 @@ function poblarCheckboxesInversion() {
   });
 }
 
+function actualizarVisibilidadPorCantidadNotas() {
+  const cantidadNotas = Number(selectCantidadNotas.value);
+  contenedorCheckboxesTipoTriada.classList.toggle("oculto", cantidadNotas !== 3);
+  contenedorCheckboxesTipoTetrada.classList.toggle("oculto", cantidadNotas !== 4);
+
+  // La "3ra inversión" solo existe para tétradas
+  const itemInv3 = contenedorCheckboxesInversion.querySelector('[data-inversion-item="3"]');
+  if (itemInv3) itemInv3.classList.toggle("oculto", cantidadNotas !== 4);
+}
+
 function obtenerTiposSeleccionados() {
-  return [...contenedorCheckboxesTipo.querySelectorAll('input[type="checkbox"]:checked')].map(
-    (input) => input.dataset.tipo
-  );
+  const cantidadNotas = Number(selectCantidadNotas.value);
+  const contenedorActivo = cantidadNotas === 3 ? contenedorCheckboxesTipoTriada : contenedorCheckboxesTipoTetrada;
+  return [...contenedorActivo.querySelectorAll('input[type="checkbox"]:checked')].map((input) => input.dataset.tipo);
 }
 
 function obtenerInversionesSeleccionadas() {
-  return [...contenedorCheckboxesInversion.querySelectorAll('input[type="checkbox"]:checked')].map(
-    (input) => Number(input.dataset.inversion)
-  );
-}
-
-// Combina los tipos e inversiones marcados, descartando combinaciones imposibles
-// (ej: "3ra inversión" marcada pero solo hay tríadas seleccionadas, que no llegan a esa inversión)
-function obtenerCombinacionesValidas() {
-  const tipos = obtenerTiposSeleccionados();
-  const inversiones = obtenerInversionesSeleccionadas();
-  const combinaciones = [];
-
-  tipos.forEach((tipo) => {
-    const cantidadNotas = recetasAcordes[tipo].cantidadNotas;
-    inversiones.forEach((inversion) => {
-      if (inversion < cantidadNotas) {
-        combinaciones.push({ tipo, cantidadNotas, inversion });
-      }
-    });
-  });
-
-  return combinaciones;
+  const cantidadNotas = Number(selectCantidadNotas.value);
+  return [...contenedorCheckboxesInversion.querySelectorAll('input[type="checkbox"]:checked')]
+    .map((input) => Number(input.dataset.inversion))
+    .filter((inv) => inv < cantidadNotas);
 }
 
 // ==========================================================================
-// Botones de nota (igual que el ejercicio 1): el usuario arma la respuesta
-// seleccionando una nota a la vez, en orden.
+// Botones de letra y de alteración
 // ==========================================================================
 
-function crearBotonesNotas() {
-  notasOrden.forEach((nota) => {
+function crearBotonesLetras() {
+  LETRAS.forEach((letra) => {
     const boton = document.createElement("button");
     boton.type = "button";
     boton.className = "opcion-boton";
-    boton.dataset.nota = nota;
-
-    const alt = bemolEquivalente[nota];
-    boton.innerHTML = alt ? `${nota}<span class="nota-alt">${alt}</span>` : nota;
-
-    boton.addEventListener("click", () => seleccionarNota(nota));
-    contenedorOpcionesNotas.appendChild(boton);
+    boton.textContent = letra;
+    boton.dataset.letra = letra;
+    boton.addEventListener("click", () => seleccionarLetra(letra, boton));
+    contenedorLetras.appendChild(boton);
   });
 }
 
-function habilitarBotonesNotas() {
-  contenedorOpcionesNotas.querySelectorAll(".opcion-boton").forEach((boton) => {
+function crearBotonesAlteraciones() {
+  ALTERACIONES.forEach((alt) => {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "opcion-boton";
+    boton.title = alt.etiqueta;
+    boton.textContent = alt.simbolo;
+    boton.dataset.sufijo = alt.sufijo;
+    boton.disabled = true;
+    boton.addEventListener("click", () => seleccionarAlteracion(alt.sufijo));
+    contenedorAlteraciones.appendChild(boton);
+  });
+}
+
+function habilitarAlteraciones() {
+  contenedorAlteraciones.querySelectorAll(".opcion-boton").forEach((boton) => {
     boton.disabled = false;
   });
+}
+
+function reiniciarGruposDeBotones() {
+  // "Reinicia ambos tipos de botones": quita el resaltado de letras y vuelve a deshabilitar alteraciones
+  contenedorLetras.querySelectorAll(".opcion-boton").forEach((boton) => boton.classList.remove("activa"));
+  contenedorAlteraciones.querySelectorAll(".opcion-boton").forEach((boton) => {
+    boton.disabled = true;
+  });
+}
+
+function habilitarTodosLosBotones() {
+  contenedorLetras.querySelectorAll(".opcion-boton").forEach((boton) => {
+    boton.disabled = false;
+    boton.classList.remove("activa");
+  });
+  contenedorAlteraciones.querySelectorAll(".opcion-boton").forEach((boton) => {
+    boton.disabled = true;
+  });
+  btnValidar.disabled = false;
   btnBorrarUltima.disabled = false;
 }
 
-function deshabilitarBotonesNotas() {
-  contenedorOpcionesNotas.querySelectorAll(".opcion-boton").forEach((boton) => {
+function deshabilitarTodosLosBotones() {
+  contenedorLetras.querySelectorAll(".opcion-boton").forEach((boton) => {
     boton.disabled = true;
   });
+  contenedorAlteraciones.querySelectorAll(".opcion-boton").forEach((boton) => {
+    boton.disabled = true;
+  });
+  btnValidar.disabled = true;
   btnBorrarUltima.disabled = true;
 }
 
 // ==========================================================================
-// Flujo de pregunta/respuesta
+// Construcción de la respuesta
 // ==========================================================================
+
+function seleccionarLetra(letra, botonElegido) {
+  if (!acordeActual) return;
+
+  respuestaUsuario.push(letra);
+  indicePendiente = respuestaUsuario.length - 1;
+
+  contenedorLetras.querySelectorAll(".opcion-boton").forEach((boton) => boton.classList.remove("activa"));
+  botonElegido.classList.add("activa");
+
+  habilitarAlteraciones();
+  actualizarRespuestaConstruida(false);
+}
+
+function seleccionarAlteracion(sufijo) {
+  if (!acordeActual || indicePendiente === null) return;
+
+  respuestaUsuario[indicePendiente] = respuestaUsuario[indicePendiente] + sufijo;
+  indicePendiente = null;
+
+  reiniciarGruposDeBotones();
+  actualizarRespuestaConstruida(false);
+}
 
 function actualizarTextoPregunta() {
   if (!acordeActual) {
@@ -161,54 +217,68 @@ function actualizarRespuestaConstruida(coloreada) {
   respuestaConstruida.innerHTML = respuestaUsuario
     .map((nota, indice) => {
       const esperada = acordeActual.notasEsperadas[indice];
-      const coincide = esNotaCorrecta(nota, esperada);
+      const coincide = esperada !== undefined && normalizarRespuestaNota(nota) === normalizarRespuestaNota(esperada);
       const clase = coincide ? "nota-correcta" : "nota-incorrecta";
       return `<span class="${clase}">${nota}</span>`;
     })
     .join(" - ");
 }
 
+// Comparación estricta: misma letra y misma alteración exacta (sin equivalencia enarmónica)
+function normalizarRespuestaNota(nota) {
+  return quitarAcentos(nota.trim().toLowerCase());
+}
+
 function generarPregunta() {
-  const combinaciones = obtenerCombinacionesValidas();
+  const cantidadNotas = Number(selectCantidadNotas.value);
+  const tipos = obtenerTiposSeleccionados();
+  const inversiones = obtenerInversionesSeleccionadas();
+
+  const combinaciones = [];
+  tipos.forEach((tipo) => {
+    inversiones.forEach((inversion) => combinaciones.push({ tipo, inversion }));
+  });
 
   if (combinaciones.length === 0) {
     acordeActual = null;
     pregunta.textContent = "—";
-    resultado.textContent = "Marca al menos un tipo de acorde y una inversión compatibles entre sí.";
+    resultado.textContent = "Marca al menos un tipo de acorde y una inversión.";
     resultado.className = "resultado incorrecto";
-    deshabilitarBotonesNotas();
+    deshabilitarTodosLosBotones();
     respuestaUsuario = [];
+    indicePendiente = null;
     actualizarRespuestaConstruida(false);
     return;
   }
 
   const elegida = combinaciones[Math.floor(Math.random() * combinaciones.length)];
-  acordeActual = generarAcordeAleatorio(elegida.cantidadNotas, elegida.tipo, elegida.inversion);
+  acordeActual = generarAcordeAleatorio(cantidadNotas, elegida.tipo, elegida.inversion);
   respuestaUsuario = [];
+  indicePendiente = null;
 
   actualizarTextoPregunta();
   actualizarRespuestaConstruida(false);
   resultado.textContent = "";
   resultado.className = "resultado";
-  habilitarBotonesNotas();
+  habilitarTodosLosBotones();
 }
 
-function seleccionarNota(nota) {
+function validarRespuesta() {
   if (!acordeActual) return;
 
-  respuestaUsuario.push(nota);
-  actualizarRespuestaConstruida(false);
-
-  if (respuestaUsuario.length === acordeActual.notasEsperadas.length) {
-    validarRespuestaCompleta();
+  if (respuestaUsuario.length !== acordeActual.notasEsperadas.length) {
+    const diferencia = acordeActual.notasEsperadas.length - respuestaUsuario.length;
+    resultado.textContent = diferencia > 0
+      ? `Te faltan ${diferencia} nota(s) antes de validar.`
+      : `Sobran ${-diferencia} nota(s): borralas antes de validar.`;
+    resultado.className = "resultado incorrecto";
+    return;
   }
-}
 
-function validarRespuestaCompleta() {
-  deshabilitarBotonesNotas();
+  deshabilitarTodosLosBotones();
 
-  const esCorrecta = respuestaUsuario.every((nota, indice) =>
-    esNotaCorrecta(nota, acordeActual.notasEsperadas[indice])
+  const esCorrecta = respuestaUsuario.every(
+    (nota, indice) => normalizarRespuestaNota(nota) === normalizarRespuestaNota(acordeActual.notasEsperadas[indice])
   );
 
   actualizarRespuestaConstruida(true);
@@ -222,16 +292,27 @@ function validarRespuestaCompleta() {
   }
 }
 
+btnValidar.addEventListener("click", validarRespuesta);
+
 btnBorrarUltima.addEventListener("click", () => {
   if (respuestaUsuario.length === 0) return;
   respuestaUsuario.pop();
+  indicePendiente = null;
+  reiniciarGruposDeBotones();
   actualizarRespuestaConstruida(false);
 });
 
 btnNueva.addEventListener("click", generarPregunta);
 checkboxMostrarFormula.addEventListener("change", actualizarTextoPregunta);
+selectCantidadNotas.addEventListener("change", () => {
+  actualizarVisibilidadPorCantidadNotas();
+  generarPregunta();
+});
 
-poblarCheckboxesTipo();
+crearCheckboxesTipo(contenedorCheckboxesTipoTriada, TIPOS_TRIADA, TIPOS_TRIADA_DEFAULT);
+crearCheckboxesTipo(contenedorCheckboxesTipoTetrada, TIPOS_TETRADA, TIPOS_TETRADA_DEFAULT);
 poblarCheckboxesInversion();
-crearBotonesNotas();
+actualizarVisibilidadPorCantidadNotas();
+crearBotonesLetras();
+crearBotonesAlteraciones();
 generarPregunta();
