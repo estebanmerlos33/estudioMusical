@@ -90,6 +90,41 @@ input[type="text"]:focus {
   box-shadow: 0 0 0 3px var(--acento-suave);
 }
 
+.checkbox-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 4px 0 20px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--acento);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nota-correcta {
+  color: var(--exito);
+  font-weight: bold;
+}
+
+.nota-incorrecta {
+  color: var(--error);
+  font-weight: bold;
+}
+
 .campo-checkbox label {
   display: flex;
   align-items: flex-start;

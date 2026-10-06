@@ -1,5 +1,5 @@
 // Nombre de caché versionado: al cambiar CACHE_NAME se invalida la caché vieja en "activate"
-const CACHE_NAME = "guitarra-pwa-v1";
+const CACHE_NAME = "guitarra-pwa-v2";
 
 // Todo el "app shell": lo necesario para que la app funcione 100% sin conexión
 const PRECACHE_URLS = [
